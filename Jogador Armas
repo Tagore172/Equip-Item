@@ -1,0 +1,50 @@
+class Player:
+	def __init__ (self, damage):
+		self.inventario = []
+		self.local = 1
+		self.damage = damage
+		self.base_damage = damage
+
+	def damage():
+		dmg = self.base_damage
+		for item in self.inventario:
+			if hasattr(item, damage):
+				dmg += item.damage
+		return dmg
+
+	def damage(self, value):
+		self.base_damage = value
+
+class Armas():
+	def __init__ (self, nome, damage):
+		self.nome = nome
+		self.damage = damage
+
+PlayerIG = Player(10)
+Espada = Armas("espada", 20)
+
+mapa = {
+	1 : {
+		"nome" : "rua",
+		"norte" : 2,
+		"item" : (Espada)
+	}
+}
+
+def mostrarStts():
+	print ("voce está em " + mapa[PlayerIG.local]["nome"])
+	print (PlayerIG.damage)
+	if "item" in mapa[PlayerIG.local]:
+		print ("voce está vendo uma" + mapa[PlayerIG.local]["item"].nome)
+	print (PlayerIG.inventario)
+	comecoJogo()
+
+def comecoJogo():
+	mover = input(">> ").split()
+	if mover[0] == "pegar" and mover[1] == mapa[PlayerIG.local]["item"].nome:
+		PlayerIG.inventario.append(mover[1])
+		del mapa[PlayerIG.local]["item"]
+		print (mover[1] + (" obtida!"))
+	mostrarStts()
+
+mostrarStts()
