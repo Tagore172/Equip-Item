@@ -1,48 +1,178 @@
-class Player:
-	def __init__ (self, damage):
-		self.inventario = []
+import random
+
+class Player():
+	def __init__ (self, nome, vidaMax, vida):
 		self.local = 1
-		self.damage = damage
-
-	def damage():
-		for item in self.inventario:
-			if hasattr(item, 'damage'):
-				self.damage += item.damage
-
-class Weapons():
-	def __init__ (self, nome, damage):
+		self.inventario = []
 		self.nome = nome
-		self.damage = damage
+		self.vidaMax = 100
+		self.vida = self.vidaMax
 
-PlayerIG = Player(10)
-Sword = Weapons("espada", 20)
+		def damage(self):
+			dmg = self.ataque_base
+			for item in self.inventario:
+				if hasattr(item, 'dano'):
+					dmg += item.dano
+			return dmg
+		
+
+class armas():
+	def __init__ (self, nome, descricao, ataque, defesa):
+		self.nome = nome
+		self.descricao = descricao
+		self.ataque = ataque
+		self.defesa = defesa
+
+class inimigos():
+	def __init__ (self, nome, descricao,vidaMax, vida, ataque, defesa):
+		self.nome = nome
+		self.descricao = descricao
+		self.vidaMax = vidaMax
+		self.vida = vida
+		self.ataque = ataque
+		self.defesa = defesa
+
+#inimigos
+zumbi = inimigos("zumbi", "monstro que uma vez foi humano mas agora só pensa em comer cerebro",100, 100, 30, 20)
+#armas
+espada = armas("espada", "uma curta espada de aspecto afiado", 50, 10)
+soco = armas("mão livre", "nada como mãos para auxiliar em todos os serviços", 5, 5)
+#PLAYER
+PlayerIG = Player("Jurandi", 100, 100, 50, 30, soco)
+def inventario():
+	print (PlayerIG.inventario)
+	acao = input(">> ").split()
+	if acao[0] == "equipar":
+		if acao[1] in PlayerIG.inventario:
+			PlayerIG.maodireita = acao[1]
+			print ("%s equipado(a)!"%acao[1])
+	else:
+		print ("acao desconhecida!")
+
+def batalha():
+	acao = input(">> ").split()
+	if acao[0] == "atacar" and acao[1] == mapa[PlayerIG.local]["inimigo"].nome:
+		mostrarSttsLuta()
+	elif acao[0] == "fugir":
+		fugir()
+	elif acao[0] == "emaninar" and acao[1] == mapa[PlayerIG.local]["inimigo"].nome:
+		examinar()
+	else:
+		print ("comando desconhecido!")
+		batalha()
+
+def mostrarSttsLuta():
+	print ("%s        VS         %s"%(PlayerIG.nome, mapa[PlayerIG.local]["inimigo"].nome))
+	print ("vida: %i             vida: %i"%(PlayerIG.vida, mapa[PlayerIG.local]["inimigo"].vida))
+	luta()
+
+def luta():
+	acao = input(">> ")
+	PAtaque = random.randint(1, 4)
+	IAtaque = random.randint(1, 4)
+	if acao == "atacar":
+		if PAtaque == 1:
+			print ("Voce errou!")
+		elif PAtaque == 2:
+			mapa[PlayerIG.local]["inimigo"].vida -= (PlayerIG.ataque / 2)
+			print ("voce causou %i de dano"%(PlayerIG.ataque / 2))
+		elif PAtaque == 3:
+			mapa[PlayerIG.local]["inimigo"].vida -= PlayerIG.ataque
+			print ("voce causou %i de dano"%PlayerIG.ataque)
+		elif PAtaque == 4:
+			mapa[PlayerIG.local]["inimigo"].vida -= (PlayerIG.ataque * 2)
+			print ("CRITICO!")
+			print ("voce causou %i de dano"%(PlayerIG.ataque * 2))
+		if mapa[PlayerIG.local]["inimigo"].vida <= 0:
+			print ("Voce venceu!")
+			del mapa[PlayerIG.local]["inimigo"]
+			mostrarStts()
+		elif IAtaque == 1:
+			print ("%s errou!"%mapa[PlayerIG.local]["inimigo"].nome)
+		elif IAtaque == 2:
+			PlayerIG.vida -= (mapa[PlayerIG.local]["inimigo"].ataque / 2)
+			print ("%s causou %i de dano"%(mapa[PlayerIG.local]["inimigo"].nome, mapa[PlayerIG.local]["inimigo"].ataque / 2))
+		elif IAtaque == 3:
+			PlayerIG.vida -= mapa[PlayerIG.local]["inimigo"].ataque
+			print ("%s causou %i de dano"%(mapa[PlayerIG.local]["inimigo"].nome, mapa[PlayerIG.local]["inimigo"].ataque))
+		elif PAtaque == 4:
+			PlayerIG.vida -= (mapa[PlayerIG.local]["inimigo"].ataque * 2)
+			print ("CRITICO!")
+			print ("%s causou %i de dano"%(PlayerIG.ataque * 2)%mapa[PlayerIG.local]["inimigo"].nome)
+			if PlayerIG.vida <= 0:
+				print ("Voce perdeu!")
+				gameover()
 
 
-def teste():
 
-	print (hasattr(Sword, 'damage'))
+def fugir():
+	pass
+def examinar():
+	pass
+def gameover():
+	pass
+
 
 mapa = {
-	1 : {
-		"nome" : "rua",
-		"item" : (Sword)
+		1 : {
+			"nome" : "casa",
+			"norte" : 2,
+			"descricao" : "descricao da sala"
+	},
+		2 : {
+			"nome" : "rua",
+			"sul" : 1,
+			"norte" : 3,
+			"item" : (espada),
+			"descricao" : "essa é a rua"
+	},
+		3 : {
+			"nome" : "floresta",
+			"sul" : 2,
+			"descricao" : "essa é a floresta",
+			"inimigo" : (zumbi)
 	}
 }
 
+
 def mostrarStts():
 	print ("voce está em " + mapa[PlayerIG.local]["nome"])
-	print (PlayerIG.damage)
-	if "item" in mapa[PlayerIG.local]:
-		print ("voce está vendo uma " + mapa[PlayerIG.local]["item"].nome)
-	print (PlayerIG.inventario)
+	if "inimigo" in mapa[PlayerIG.local]:
+		print ("voce avista um(a) " + mapa[PlayerIG.local]["inimigo"].nome)
+		batalha()
 	comecoJogo()
 
 def comecoJogo():
+	acoesAceitas = ["ir", "pegar", "examinar"]
 	mover = input(">> ").split()
-	if mover[0] == "pegar" and mover[1] == mapa[PlayerIG.local]["item"].nome:
-		PlayerIG.inventario.append(mover[1])
-		del mapa[PlayerIG.local]["item"]
-		print (mover[1] + (" obtida!"))
-	mostrarStts()
 
+#MOVER
+	if mover[0] in acoesAceitas and mover[1] in mapa[PlayerIG.local]:
+		PlayerIG.local = mapa[PlayerIG.local][mover[1]]
+
+#PEGAR
+	elif mover[0] == "pegar" and mover[1] in mapa[PlayerIG.local]["item"].nome:
+		PlayerIG.inventario.append(mover[1])
+		print (mover[1] + (" obtido!"))
+		del mapa[PlayerIG.local]["item"]
+	elif mover[0] == "examinar" and mover[1] == "ambiente":
+		print (mapa[PlayerIG.local]["descricao"])
+
+#EXAMINAR
+	elif mover[0] == "examinar" and mover[1] in mapa[PlayerIG.local]["item"].nome:
+		print (mapa[PlayerIG.local]["item"].descricao)
+		print (mapa[PlayerIG.local]["item"].ataque)
+		print (mapa[PlayerIG.local]["item"].defesa)
+	elif mover[0] == "examinar" and mover[1] == mapa[PlayerIG.local]["nome"]:
+		print (mapa[PlayerIG.local]["descricao"])
+		if "item" in mapa[PlayerIG.local]:
+			print ("voce está vendo um(a) %s"%mapa[PlayerIG.local]["item"].nome)
+#INVENTARIO
+	elif mover[0] == "abrir" and mover[1] == "inventario":
+		inventario()
+
+	mostrarStts()
 mostrarStts()
+
+def pegar():
+	pass
