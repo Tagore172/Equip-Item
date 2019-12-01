@@ -1,20 +1,19 @@
 import random
 
 class Player():
-	def __init__ (self, nome, vidaMax, vida, ataque, defesa):
+	def __init__ (self, nome, vidaMax, vida, b_ataque, defesa):
 		self.local = 1
 		self.inventario = []
 		self.nome = nome
 		self.vidaMax = 100
 		self.vida = self.vidaMax
+		self.ataque = b_ataque
+		self.add_ataque()
 
-		def damage(self):
-			dmg = self.ataque_base
-			for item in self.inventario:
-				if hasattr(item, 'dano'):
-					dmg += item.dano
-			return dmg
-		
+	def add_ataque(self):
+		for item in self.inventario:
+			if hasattr(item, 'ataque'):
+				self.ataque += item.ataque
 
 class armas():
 	def __init__ (self, nome, descricao, ataque, defesa):
@@ -35,7 +34,7 @@ class inimigos():
 #inimigos
 zumbi = inimigos("zumbi", "monstro que uma vez foi humano mas agora só pensa em comer cerebro",100, 100, 10, 5)
 #armas
-espada = armas("espada", "uma curta espada de aspecto afiado", 50, 10)
+espada = armas("espada", "uma curta espada de aspecto afiado", 51, 10)
 soco = armas("mão livre", "nada como mãos para auxiliar em todos os serviços", 5, 5)
 #PLAYER
 PlayerIG = Player("Jurandi", 100, 100, 50, 30)
@@ -52,7 +51,7 @@ def inventario():
 def batalha():
 	acao = input(">> ").split()
 	if acao[0] == "atacar" and acao[1] == mapa[PlayerIG.local]["inimigo"].nome:
-		mostrarSttsLuta()
+		mostrarSttsLuta(PlayerIG)
 	elif acao[0] == "fugir":
 		fugir()
 	elif acao[0] == "emaninar" and acao[1] == mapa[PlayerIG.local]["inimigo"].nome:
@@ -61,12 +60,15 @@ def batalha():
 		print ("comando desconhecido!")
 		batalha()
 
-def mostrarSttsLuta():
+def mostrarSttsLuta(PlayerIG):
+	PlayerIG.add_ataque()
 	print ("%s        VS         %s"%(PlayerIG.nome, mapa[PlayerIG.local]["inimigo"].nome))
 	print ("vida: %i             vida: %i"%(PlayerIG.vida, mapa[PlayerIG.local]["inimigo"].vida))
-	luta()
+	print ("ataque: %i        	ataque: %i"%(PlayerIG.ataque, mapa[PlayerIG.local]["inimigo"].ataque))
+	luta(PlayerIG)
 
-def luta():
+def luta(PlayerIG):
+	PlayerIG.add_ataque()
 	acao = input(">> ")
 	PAtaque = random.randint(1, 4)
 	IAtaque = random.randint(1, 4)
@@ -135,14 +137,16 @@ mapa = {
 }
 
 
-def mostrarStts():
+def mostrarStts(PlayerIG):
+	PlayerIG.add_ataque()
+	print (PlayerIG.ataque)
 	print ("voce está em " + mapa[PlayerIG.local]["nome"])
 	if "inimigo" in mapa[PlayerIG.local]:
 		print ("voce avista um(a) " + mapa[PlayerIG.local]["inimigo"].nome)
 		batalha()
-	comecoJogo()
+	comecoJogo(PlayerIG)
 
-def comecoJogo():
+def comecoJogo(PlayerIG):
 	acoesAceitas = ["ir", "pegar", "examinar"]
 	mover = input(">> ").split()
 
@@ -171,8 +175,8 @@ def comecoJogo():
 	elif mover[0] == "abrir" and mover[1] == "inventario":
 		inventario()
 
-	mostrarStts()
-mostrarStts()
+	mostrarStts(PlayerIG)
+mostrarStts(PlayerIG)
 
 def pegar():
 	pass
