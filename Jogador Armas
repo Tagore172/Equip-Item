@@ -1,7 +1,7 @@
 import random
 
 class Player():
-	def __init__ (self, nome, vidaMax, vida):
+	def __init__ (self, nome, vidaMax, vida, ataque, defesa):
 		self.local = 1
 		self.inventario = []
 		self.nome = nome
@@ -33,12 +33,12 @@ class inimigos():
 		self.defesa = defesa
 
 #inimigos
-zumbi = inimigos("zumbi", "monstro que uma vez foi humano mas agora só pensa em comer cerebro",100, 100, 30, 20)
+zumbi = inimigos("zumbi", "monstro que uma vez foi humano mas agora só pensa em comer cerebro",100, 100, 10, 5)
 #armas
 espada = armas("espada", "uma curta espada de aspecto afiado", 50, 10)
 soco = armas("mão livre", "nada como mãos para auxiliar em todos os serviços", 5, 5)
 #PLAYER
-PlayerIG = Player("Jurandi", 100, 100, 50, 30, soco)
+PlayerIG = Player("Jurandi", 100, 100, 50, 30)
 def inventario():
 	print (PlayerIG.inventario)
 	acao = input(">> ").split()
